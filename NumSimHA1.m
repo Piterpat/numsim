@@ -1,23 +1,46 @@
 function NumSimHA1(n,e)
 
-    for i=1:32
-        code_d=(2*i)-e;
-        A=zeros(n,n);
-        A(1,:)=randi([0 1],1,n);
-    
-        code_b=dec2bin(code_d,6);
+    %S Matrix um s zu ermitteln. 
+    if n > 5
+        S = sparse([1:n 2:n 3:n 1:(n-1) 1:(n-2) 1 1 2 n n-1 n], [1:n 1:(n-1) 1:(n-2) 2:n 3:n n-1 n n 1 1 2], 1, n, n);
         
-        for ii=2:n
-            tot=A(ii-1,1:end-4)+A(ii-1,2:end-3)+A(ii-1,3:end-2)+A(ii-1,4:end-1)+A(ii-1,5:end)
-            A(ii,3:end-2)=code_b(tot)
+    else
+        S = ones(n);
+    end
+    
+    for R=e:2:(62+e)
+        %Regelliste definieren (in Binaercode)
+        Regel = bitget(R,1:6);
+        
+        %anfaengliche Zufallszeile
+        zeile = randi([0,1],1,n);
+        %Matrix fuer spaetere Darstellung
+        M = zeros(n);
+        M(1,:) = zeile;
+        
+        %Matrix um indexverschiebung anzuwenden (0 -> 1)
+        ONES = ones(1,n);
+        
+        %Iteration durch alle 'Zeitschritte'
+        for x = 1:(n-1)
+            %Summen der Nachbarschaften ermitteln
+            s = zeile*S;
+            
+            %Regel anwenden
+            zeile = Regel(s+ONES);
+            
+            %Ergebnis Speichern
+            M(x,:) = zeile;
         end
         
-        a = subplot(4,8,i);
-        image(logical(A))
-        colormap([0 0 0;1 1 1])
-        
-        a.Title.String = num2str(code_d);
-        axis square
-        set(gca,'visible','off')
+        %Subplot erstellen
+        subplot(4,8,(R+e)/2+1-e)
+        image(logical(M))
+        axis off
+        title(int2str(R))
     end
+    
+    map = [1,1,1;0,0,0];
+    colormap(map)
+    
 end
