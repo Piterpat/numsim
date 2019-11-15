@@ -34,6 +34,7 @@ function NumSimHA1(n,e)
         end
         
         %Subplot erstellen
+        
         subplot(4,8,(R+e)/2+1-e)
         image(logical(M))
         axis off
