@@ -4,11 +4,6 @@ function NumSimHA2(n,J,k)
     % Game matrix in groesse nxn
     % kann durch sparse ersetzt werden
     A=zeros(n,n);
-    
-    % Conway Game of Life Upadate Regel
-    % 1. zeile für a_ij = 0, 2. Zeile für a_ij=1
-    R = [0 0 0 1 0 0 0 0 0 0 ...
-         0 0 0 1 1 0 0 0 0 0];
      
     %% Startkonfiguration 
     if k == 1
@@ -113,10 +108,15 @@ function NumSimHA2(n,J,k)
         =F;
     end
     
+    %Zur schnelleren Berechnung wird A in ein ein logical array
+    %transformiert
+    A=logical(A);
+    
     %% Zeitschleife
+    tic
     for t=1:J
         %% Darstellung
-        image(logical(A))
+        image(A)
         axis square
         axis off
         colormap([1,1,1;0,0,0])
@@ -126,18 +126,19 @@ function NumSimHA2(n,J,k)
         
         % Summationsmatrix
         S=zeros(n,n);
-        for i=-1:1
-            for j=-1:1
-                S=S+circshift(A,[i j]);
-            end
-        end
+        S=S +circshift(A,[-1 -1])...
+            +circshift(A,[-1  0])...
+            +circshift(A,[-1  0])...
+            +circshift(A,[ 0 -1])...
+            +circshift(A,[ 0  0])...
+            +circshift(A,[ 0  1])...
+            +circshift(A,[ 1 -1])...
+            +circshift(A,[ 1  0])...
+            +circshift(A,[ 1  1]);
         
-        %Matrix um 10 erweitert an wo a_ij=1
-        S=S+A.*10;
-        
-        %Auswertung
-        A=R(S+1);
+        A=logical((S==3)+(A.*(S==4)));
        
     end
+    toc
     
 end
