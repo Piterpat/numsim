@@ -1,11 +1,14 @@
 %% Startparameters
-    %Detail (Affects Speed)
-    s=250;
-
+    %Detail
+    d_t=1000; %Curvestep
+    w_d=1000; %Anglestep (time, affects speed)
+    
+    %Speed ]0,1]
+    s=0.01;
+    
     %Lissajous curve
     a=3; %Proportions
     b=2;
-    d=0; %Starting Angle
     
     %Figure
     fig = figure(...
@@ -14,28 +17,34 @@
         'Color','w');
     set(fig, 'MenuBar', 'none');
     set(fig, 'ToolBar', 'none');
+    
+%% Precalculation
+    t = 0:pi/d_t:2*pi;
+    w = 0:pi/w_d:2*pi;
+    xt=zeros(size(t,2),size(w,2));
+    yt=zeros(size(t,2),size(w,2));
+    stay = true;
+    
+%% Calculation
+    for i=1:size(w,2)
+        xt(:,i) = 2*sin(b*t);
+        yt(:,i) = sin(a*t+w(i));
+    end
+    
+%% Plot
+    while stay
+        for i=1:ceil(s*w_d):size(w,2)
+            %% Draw
+            p = plot(xt(:,i),yt(:,i),'k');
+            p.LineWidth = 7;
+            axis equal
+            axis off
+            drawnow
 
-%% Timeloop
-    while true
-        %% Curve
-        t = 0:pi/s:2*pi;
-        xt = 2*sin(b*t);
-        yt = sin(a*t+d);
-        zt = t;
-        
-        %% Plot
-        p = plot3(xt,yt,zt,'k');
-        p.LineWidth = 3;
-        axis equal
-        axis off
-        view(0,90)
-        drawnow
-        
-        %% Break Condition
-        if ~ishghandle(fig)
-            break
+            %% Break Condition
+            if ~ishghandle(fig)
+                stay=false;
+                break
+            end
         end
-        
-        %% Increment
-        d = d + pi/s;
     end
