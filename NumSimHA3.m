@@ -58,17 +58,12 @@ function NumSimHA3(n,J,k)
             s=(s*S)./9;
             
             %Plotting ohne Ränder
-            if i > 10000
-                plot(linspace(10,n-10,n-20),s(11:n-10))
-                axis([0 n 0 n])
-                yticks([0 n/2 n])
-                yticklabels({'0%','50%','100%'})
-                yticks([])
-                drawnow
-            end
-            if mod(i,1000) == 0
-                i
-            end
+            plot(linspace(10,n-10,n-20),s(11:n-10))
+            axis([0 n 0 n])
+            yticks([0 n/2 n])
+            yticklabels({'0%','50%','100%'})
+            yticks([])
+            drawnow
         end
         %% Update
             %% erste Drehungen 
